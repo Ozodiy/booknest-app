@@ -82,7 +82,7 @@ University students struggle to find relevant book recommendations from peers st
 
 ## 📋 Project Management
 
-- **Trello Board:** [BookNest Sprint Board]([PASTE_YOUR_TRELLO_LINK_HERE](https://trello.com/invite/b/69e0e9e34a675f4455912fa7/ATTId4412186bc77d79d42dcf70dc00ace4eC0D24CC2/booknest-sprint-board
+- **Trello Board:** [BookNest Sprint Board]([(https://trello.com/invite/b/69e0e9e34a675f4455912fa7/ATTId4412186bc77d79d42dcf70dc00ace4eC0D24CC2/booknest-sprint-board]
 ))
 - **Sprint 1 scope:** User login, browse books, view book details
 
