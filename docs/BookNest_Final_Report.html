@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BookNest — Final Report</title>
+<style>
+@page { size: A4; margin: 22mm 18mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 11pt; line-height: 1.55; color: #1a1a1a;
+  max-width: 100%; margin: 0;
+}
+h1 { font-size: 23pt; color: #1B5E20; border-bottom: 3px solid #1B5E20;
+     padding-bottom: 6px; margin-top: 0.2em; }
+h2 { font-size: 16pt; color: #1B5E20; margin-top: 1.4em;
+     border-bottom: 1px solid #cfe0cf; padding-bottom: 3px; }
+h3 { font-size: 13pt; color: #2e7d32; margin-top: 1.1em; }
+h4 { font-size: 11.5pt; color: #2e7d32; }
+p { margin: 0.5em 0; }
+a { color: #1565c0; text-decoration: none; }
+code {
+  font-family: "Consolas", "Courier New", monospace; font-size: 9.5pt;
+  background: #f2f4f2; padding: 1px 5px; border-radius: 4px; color: #b1361e;
+}
+pre {
+  background: #1e1e1e; color: #e6e6e6; padding: 12px 14px; border-radius: 8px;
+  overflow-x: auto; font-size: 9pt; line-height: 1.45; page-break-inside: avoid;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 9pt; }
+table {
+  border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 10pt;
+  page-break-inside: avoid;
+}
+th { background: #1B5E20; color: #fff; text-align: left; padding: 7px 10px; }
+td { border: 1px solid #d4d4d4; padding: 6px 10px; vertical-align: top; }
+tr:nth-child(even) td { background: #f6f9f6; }
+blockquote {
+  border-left: 4px solid #1B5E20; background: #f3f8f3; margin: 0.8em 0;
+  padding: 6px 14px; color: #33463a;
+}
+ul, ol { margin: 0.4em 0 0.8em 1.4em; }
+li { margin: 0.25em 0; }
+hr { border: none; border-top: 1px solid #d0d0d0; margin: 1.6em 0; }
+strong { color: #15301a; }
+</style>
+</head>
+<body>
+<h1 id="booknest-final-project-report">BookNest — Final Project Report</h1>
+<h3 id="android-firebase-team-project">Android + Firebase Team Project</h3>
+<p><strong>Student:</strong> Ozodbek Tursunaliyev
+<strong>Student ID:</strong> 57264
+<strong>Course:</strong> Cloud Computing Architecture, Akademia WSB
+<strong>Submission type:</strong> Individual project (solo — all four roles performed by the student)
+<strong>Submission deadline:</strong> 19.06.2026 20:00
+<strong>Repository:</strong> https://github.com/Ozodiy/booknest-app</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li>Executive Summary</li>
+<li>Problem Statement &amp; Target Users</li>
+<li>MVP &amp; Final Feature Set</li>
+<li>System Architecture</li>
+<li>Data Model</li>
+<li>Implementation Overview</li>
+<li>Advanced Firebase Feature (Storage)</li>
+<li>Testing Strategy</li>
+<li>Usability Testing &amp; Improvements</li>
+<li>Development Workflow &amp; Project Management</li>
+<li>Firebase Free-Tier Usage</li>
+<li>Challenges &amp; Solutions</li>
+<li>Future Work</li>
+<li>Conclusion</li>
+<li>Appendix — Screenshot Index</li>
+</ol>
+<hr />
+<h2 id="1-executive-summary">1. Executive Summary</h2>
+<p><strong>BookNest</strong> is an Android application that helps university students discover and
+share book recommendations from peers. It was built across three laboratory sprints
+(Lab 1: planning &amp; setup, Lab 2: authentication + CRUD, Lab 3: advanced feature +
+testing) and finalized for submission.</p>
+<p>The project was delivered <strong>individually</strong> — because teammates were absent, all four
+roles (Product Owner, Tech Lead, Developer, QA/DevOps) were performed by one student,
+as permitted by the lab guidelines.</p>
+<p>The final application includes secure accounts, a real-time recommendation feed, a
+personal reading list, uploadable book covers (Firebase Storage), four UX extensions,
+and a JUnit test suite — all running on Firebase's free Spark plan.</p>
+<hr />
+<h2 id="2-problem-statement-target-users">2. Problem Statement &amp; Target Users</h2>
+<blockquote>
+<p><em>University students struggle to find relevant book recommendations from peers
+studying similar subjects, so they waste time searching generic book lists that
+don't match their academic interests.</em></p>
+</blockquote>
+<p><strong>Target users:</strong> university students (undergraduate and graduate), aged ~18–30, who
+read for both academic enrichment and leisure.</p>
+<p><strong>Solution:</strong> a peer-driven feed where any student can recommend a book (with a cover,
+description, and genre) and save interesting ones to a personal "Want to Read" list.</p>
+<hr />
+<h2 id="3-mvp-final-feature-set">3. MVP &amp; Final Feature Set</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Status</th>
+<th>Lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Email/password registration &amp; login</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Session persistence (skip login when signed in)</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Browse recommendations (real-time list)</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>View book details</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Add a recommendation</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Edit / delete own recommendation (owner-only)</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Save to "Want to Read" list</td>
+<td>✅</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Search / filter</td>
+<td>✅ (extension)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Sorting (title/author/genre/newest)</td>
+<td>✅ (extension)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Input validation</td>
+<td>✅ (extension)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Status toggle (want-to-read ↔ finished)</td>
+<td>✅ (extension)</td>
+<td>2</td>
+</tr>
+<tr>
+<td><strong>Cover image upload (Firebase Storage)</strong></td>
+<td>✅ (advanced)</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Unit tests (17 methods)</td>
+<td>✅</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-system-architecture">4. System Architecture</h2>
+<p>BookNest follows a standard <strong>mobile + serverless cloud backend</strong> pattern, suitable
+for the Firebase Spark (free) plan.</p>
+<pre><code>┌─────────────────────────────┐         ┌──────────────────────────────┐
+│        ANDROID APP          │  Auth   │        FIREBASE BACKEND       │
+│      (Kotlin, Compose)      │ ──────► │                               │
+│                             │         │  Authentication (email/pwd)   │
+│  Login / Register           │ Reads/  │  Cloud Firestore              │
+│  Book List (search+sort)    │ Writes  │    • users                    │
+│  Book Detail / Edit         │ ◄─────► │    • books                    │
+│  Add Book (+ cover picker)  │         │    • savedBooks               │
+│  Saved (Want-to-Read)       │ Upload  │  Firebase Storage             │
+│                             │ ──────► │    • book_covers/             │
+└─────────────────────────────┘         └──────────────────────────────┘
+        │  MVVM: UI ◄─ ViewModel ◄─ Firebase SDK
+        ▼
+  Future: Web Admin Panel (out of scope, placeholder)
+</code></pre>
+<p><strong>Layering (clean separation):</strong></p>
+<ul>
+<li><strong>UI (Compose)</strong> — <code>ui/screens/*</code>, <code>ui/nav/BookNestNavigation.kt</code></li>
+<li><strong>State/logic (ViewModels)</strong> — <code>auth/AuthViewModel.kt</code>, <code>viewmodel/BookViewModel.kt</code></li>
+<li><strong>Pure logic (unit-testable)</strong> — <code>util/Validators.kt</code>, <code>util/BookFilters.kt</code></li>
+<li><strong>Data models</strong> — <code>data/Book.kt</code>, <code>data/SavedBook.kt</code>, <code>data/AppUser.kt</code></li>
+</ul>
+<blockquote>
+<p><strong>[SCREENSHOT A]</strong> — Architecture diagram (export this ASCII or redraw in FigJam/draw.io).</p>
+</blockquote>
+<hr />
+<h2 id="5-data-model">5. Data Model</h2>
+<p>Three Firestore collections (within the assignment's "max 3 collections" limit).</p>
+<h3 id="users"><code>users</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>userId</td>
+<td>string</td>
+<td>Firebase Auth UID</td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>Login email</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td>string</td>
+<td>Public name</td>
+</tr>
+<tr>
+<td>university</td>
+<td>string</td>
+<td>e.g. Akademia WSB</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>Account creation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="books"><code>books</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bookId</td>
+<td>string</td>
+<td>Auto-generated document ID</td>
+</tr>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>Book title</td>
+</tr>
+<tr>
+<td>author</td>
+<td>string</td>
+<td>Author</td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td>Why it's recommended (≤500 chars)</td>
+</tr>
+<tr>
+<td>genre</td>
+<td>string</td>
+<td>e.g. Fiction, Programming</td>
+</tr>
+<tr>
+<td>coverImageUrl</td>
+<td>string</td>
+<td>Firebase Storage download URL (Lab 3)</td>
+</tr>
+<tr>
+<td>recommendedBy</td>
+<td>string</td>
+<td>userId of recommender (owner)</td>
+</tr>
+<tr>
+<td>recommenderName</td>
+<td>string</td>
+<td>Display name shown in UI</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>Creation time</td>
+</tr>
+</tbody>
+</table>
+<h3 id="savedbooks"><code>savedBooks</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>savedId</td>
+<td>string</td>
+<td>Auto-generated document ID</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>string</td>
+<td>Owner of the saved entry</td>
+</tr>
+<tr>
+<td>bookId</td>
+<td>string</td>
+<td>Reference to <code>books</code></td>
+</tr>
+<tr>
+<td>title / author</td>
+<td>string</td>
+<td>Denormalized for fast list display</td>
+</tr>
+<tr>
+<td>status</td>
+<td>string</td>
+<td><code>want-to-read</code> or <code>finished</code></td>
+</tr>
+<tr>
+<td>savedAt</td>
+<td>timestamp</td>
+<td>When saved</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security:</strong> see <a href="../firestore.rules"><code>firestore.rules</code></a> and
+<a href="../storage.rules"><code>storage.rules</code></a> — every access requires authentication, and only
+owners can edit/delete their own books and saved entries.</p>
+<hr />
+<h2 id="6-implementation-overview">6. Implementation Overview</h2>
+<ul>
+<li><strong>Language/UI:</strong> Kotlin + Jetpack Compose (Material 3), Navigation-Compose.</li>
+<li><strong>Pattern:</strong> MVVM with <code>StateFlow</code>-driven UI state and Kotlin coroutines for async
+  Firebase calls (<code>kotlinx-coroutines-play-services</code> <code>.await()</code>).</li>
+<li><strong>Real-time data:</strong> Firestore <code>addSnapshotListener</code> keeps the list live.</li>
+<li><strong>Image loading:</strong> Coil <code>AsyncImage</code>.</li>
+<li><strong>Min SDK 24</strong>, target/compile SDK 34.</li>
+</ul>
+<p>Key files are linked throughout the Lab 2 and Lab 3 reports.</p>
+<hr />
+<h2 id="7-advanced-firebase-feature-storage">7. Advanced Firebase Feature (Storage)</h2>
+<p>Cover-image upload is the chosen advanced feature. Flow: pick image → preview →
+upload with progress → store download URL in Firestore → display via Coil → delete
+with the book. Restricted by storage rules to authenticated users and images &lt; 5 MB.
+Full detail in <a href="Lab3_Report.md"><code>Lab3_Report.md</code></a> §3.</p>
+<hr />
+<h2 id="8-testing-strategy">8. Testing Strategy</h2>
+<ul>
+<li><strong>Unit tests (JUnit):</strong> 17 methods across <code>ValidatorsTest</code> and <code>BookFiltersTest</code>,
+  covering validation and search/sort logic. Run with <code>./gradlew test</code>.</li>
+<li><strong>Why pure functions:</strong> logic lives in <code>util/</code> with no Android dependencies, so it
+  is fully testable on the JVM without an emulator.</li>
+<li><strong>Manual/E2E:</strong> full login → CRUD → cover upload flows were exercised on the
+  emulator during each lab demo.</li>
+</ul>
+<hr />
+<h2 id="9-usability-testing-improvements">9. Usability Testing &amp; Improvements</h2>
+<p>A structured think-aloud usability test (Lab 3 Phase 4) produced five prioritized
+findings; the four critical/important ones were fixed: upload progress bar, add-book
+validation, save-state icon toggle, and a friendly empty state. Details in
+<a href="Lab3_Report.md"><code>Lab3_Report.md</code></a> §5.</p>
+<hr />
+<h2 id="10-development-workflow-project-management">10. Development Workflow &amp; Project Management</h2>
+<ul>
+<li><strong>Version control:</strong> Git + GitHub (public repo so the professor can review). Clear,
+  descriptive commits; feature-branch + PR naming documented for the team scenario.</li>
+<li><strong>Project management:</strong> Trello Kanban board — Backlog, Sprint 1, In Progress,
+  Review, Done — with user stories BN-01…BN-05 and Lab 2/3 task cards.</li>
+</ul>
+<blockquote>
+<p><strong>[SCREENSHOT B]</strong> — GitHub repository (files + commit history).
+<strong>[SCREENSHOT C]</strong> — Trello board final state.</p>
+</blockquote>
+<hr />
+<h2 id="11-firebase-free-tier-usage">11. Firebase Free-Tier Usage</h2>
+<p>BookNest stays comfortably within the Spark plan limits:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Spark limit</th>
+<th>BookNest usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firestore reads</td>
+<td>50,000/day</td>
+<td>tiny (student demo)</td>
+</tr>
+<tr>
+<td>Firestore writes</td>
+<td>20,000/day</td>
+<td>tiny</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>5 GB</td>
+<td>a few MB of covers</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>generous</td>
+<td>a handful of test accounts</td>
+</tr>
+</tbody>
+</table>
+<p>No paid features are used.</p>
+<hr />
+<h2 id="12-challenges-solutions">12. Challenges &amp; Solutions</h2>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firestore "Permission denied" on first read</td>
+<td>Wrote authenticated security rules</td>
+</tr>
+<tr>
+<td>Blank <code>coverImageUrl</code> after upload</td>
+<td>Await <code>downloadUrl</code> before writing the doc</td>
+</tr>
+<tr>
+<td>Remote covers not loading</td>
+<td>Added <code>INTERNET</code> permission; used Coil</td>
+</tr>
+<tr>
+<td>Back button returning to login</td>
+<td><code>popUpTo(0){inclusive=true}</code> to clear back stack</td>
+</tr>
+<tr>
+<td>Solo work → no peer review</td>
+<td>Compensated with unit tests + structured self-usability test</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-future-work">13. Future Work</h2>
+<ul>
+<li>Genre dropdown (controlled vocabulary) instead of free text.</li>
+<li>Cloud Function to prevent duplicate recommendations and rate-limit spam.</li>
+<li>Profile pictures (extends the Storage work already done).</li>
+<li>Pagination for large lists; Firestore composite indexes.</li>
+<li>Instrumented UI tests (Espresso/Compose test) for navigation flows.</li>
+</ul>
+<hr />
+<h2 id="14-conclusion">14. Conclusion</h2>
+<p>BookNest fulfils every required deliverable across the three labs: a planned and
+documented design, working authentication and Firestore CRUD, four UX extensions, an
+advanced Firebase Storage feature, a passing unit-test suite, and usability-driven
+refinements — all delivered solo on real tools (Android Studio, Firebase, GitHub,
+Trello). The codebase is cleanly layered, making it straightforward to extend in
+future sprints.</p>
+<hr />
+<h2 id="15-appendix-screenshot-index">15. Appendix — Screenshot Index</h2>
+<p>Capture these from the running app / consoles (see <code>SCREENSHOT_GUIDE.md</code>). Numbers
+match the <code>[SCREENSHOT n]</code> markers in the Lab 2 and Lab 3 reports.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What to capture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Firebase Auth — Email/Password enabled</td>
+</tr>
+<tr>
+<td>2–4</td>
+<td>Login / Register / login error</td>
+</tr>
+<tr>
+<td>5–7</td>
+<td>Book list / add form / delete confirm</td>
+</tr>
+<tr>
+<td>8–9</td>
+<td>Search filtering / Want-to-Read with "Finished"</td>
+</tr>
+<tr>
+<td>10–11</td>
+<td>Trello Sprint 1 Done / GitHub commits</td>
+</tr>
+<tr>
+<td>12–13</td>
+<td>Trello Sprint 2 / Firebase Storage enabled</td>
+</tr>
+<tr>
+<td>14–16</td>
+<td>Upload progress / list covers / detail cover</td>
+</tr>
+<tr>
+<td>17</td>
+<td>17/17 unit tests passing</td>
+</tr>
+<tr>
+<td>18–19</td>
+<td>Usability Trello cards / validation before-after</td>
+</tr>
+<tr>
+<td>A–C</td>
+<td>Architecture diagram / GitHub repo / final Trello board</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

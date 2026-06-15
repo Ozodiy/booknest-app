@@ -28,7 +28,8 @@ University students struggle to find relevant book recommendations from peers st
 |-------|------------|
 | Frontend | Android (Kotlin, Jetpack Compose) |
 | Min SDK | API 24 (Android 7.0) |
-| Backend | Firebase — Authentication + Firestore *(planned)* |
+| Backend | Firebase — Authentication, Firestore, **Storage** |
+| Images | Coil (remote cover loading) |
 | IDE | Android Studio |
 | Version Control | Git + GitHub |
 | Project Management | Trello |
@@ -67,7 +68,10 @@ University students struggle to find relevant book recommendations from peers st
 | author | string | Book author |
 | description | string | Short summary (~500 chars max) |
 | genre | string | e.g. Fiction, Science, Biography |
-| recommendedBy | string | Reference to userId |
+| coverImageUrl | string | Firebase Storage download URL (Lab 3) |
+| recommendedBy | string | Reference to userId of recommender |
+| recommenderName | string | Display name shown in the UI |
+| createdAt | timestamp | Creation time |
 
 ### `savedBooks`
 | Field | Type | Description |
@@ -89,13 +93,36 @@ University students struggle to find relevant book recommendations from peers st
 
 ## 🚀 Project Status
 
-- ✅ Planning complete (problem statement, MVP features, architecture, data model)
-- ✅ GitHub repository initialized
-- ✅ Android project created in Kotlin with Jetpack Compose
-- ✅ MainActivity customized with BookNest branding
-- ✅ Trello board with user stories and Sprint 1 defined
-- 🔜 Firebase integration (next sprint)
-- 🔜 Feature implementation (login, book list, details)
+- ✅ **Lab 1 — Planning & setup:** problem statement, MVP, architecture, data model, repo, Trello
+- ✅ **Lab 2 — Auth + CRUD:** email/password login, Firestore CRUD for books, 4 extensions
+- ✅ **Lab 3 — Advanced + testing:** Firebase **Storage** cover uploads, 17 unit tests, usability fixes
+
+---
+
+## ✅ Implemented Features (Lab 2 & 3)
+
+- **Authentication** — register, log in, log out, session persistence, friendly errors
+- **Firestore CRUD** — add / browse (real-time) / edit / delete book recommendations
+- **Owner permissions** — only the recommender can edit/delete their own books
+- **Want-to-Read list** — save books, toggle want-to-read ↔ finished
+- **Extensions** — search/filter, sorting, input validation, status toggle, empty state
+- **Advanced feature (Firebase Storage)** — pick a cover image, upload with progress, display via Coil, delete with the book
+- **Unit tests** — 17 JUnit methods over validation + search/sort logic (`./gradlew test`)
+
+### Setup note
+This project uses Firebase. Add your own `app/google-services.json`
+(see `app/google-services.json.TEMPLATE`) and enable Email/Password Auth, Firestore,
+and Storage in the Firebase Console. Security rules are in `firestore.rules` and `storage.rules`.
+
+## 📚 Documentation
+
+Full lab reports, the final report, the presentation outline, the screenshot guide,
+and UI mockups live in [`docs/`](docs/):
+
+- `docs/Lab2_Report.md` · `docs/Lab3_Report.md` · `docs/Final_Report.md`
+- `docs/Final_Presentation_Outline.md` · `docs/SCREENSHOT_GUIDE.md`
+- PDF versions: `docs/BookNest_Lab2_Report.pdf`, `…Lab3…`, `…Final…`
+- UI mockups: `docs/mockups/`
 
 ---
 

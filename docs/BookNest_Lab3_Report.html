@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BookNest — Lab 3 Report</title>
+<style>
+@page { size: A4; margin: 22mm 18mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 11pt; line-height: 1.55; color: #1a1a1a;
+  max-width: 100%; margin: 0;
+}
+h1 { font-size: 23pt; color: #1B5E20; border-bottom: 3px solid #1B5E20;
+     padding-bottom: 6px; margin-top: 0.2em; }
+h2 { font-size: 16pt; color: #1B5E20; margin-top: 1.4em;
+     border-bottom: 1px solid #cfe0cf; padding-bottom: 3px; }
+h3 { font-size: 13pt; color: #2e7d32; margin-top: 1.1em; }
+h4 { font-size: 11.5pt; color: #2e7d32; }
+p { margin: 0.5em 0; }
+a { color: #1565c0; text-decoration: none; }
+code {
+  font-family: "Consolas", "Courier New", monospace; font-size: 9.5pt;
+  background: #f2f4f2; padding: 1px 5px; border-radius: 4px; color: #b1361e;
+}
+pre {
+  background: #1e1e1e; color: #e6e6e6; padding: 12px 14px; border-radius: 8px;
+  overflow-x: auto; font-size: 9pt; line-height: 1.45; page-break-inside: avoid;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 9pt; }
+table {
+  border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 10pt;
+  page-break-inside: avoid;
+}
+th { background: #1B5E20; color: #fff; text-align: left; padding: 7px 10px; }
+td { border: 1px solid #d4d4d4; padding: 6px 10px; vertical-align: top; }
+tr:nth-child(even) td { background: #f6f9f6; }
+blockquote {
+  border-left: 4px solid #1B5E20; background: #f3f8f3; margin: 0.8em 0;
+  padding: 6px 14px; color: #33463a;
+}
+ul, ol { margin: 0.4em 0 0.8em 1.4em; }
+li { margin: 0.25em 0; }
+hr { border: none; border-top: 1px solid #d0d0d0; margin: 1.6em 0; }
+strong { color: #15301a; }
+</style>
+</head>
+<body>
+<h1 id="laboratory-3-advanced-features-and-testing">Laboratory 3 — Advanced Features and Testing</h1>
+<h2 id="booknest-firebase-storage-unit-testing-usability">BookNest — Firebase Storage, Unit Testing &amp; Usability</h2>
+<p><strong>Student:</strong> Ozodbek Tursunaliyev
+<strong>Student ID:</strong> 57264
+<strong>Course:</strong> Cloud Computing Architecture, Akademia WSB
+<strong>Submission type:</strong> Individual project (solo — all roles performed by the student)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li>Executive Summary</li>
+<li>Sprint Planning &amp; Feature Selection</li>
+<li>Advanced Firebase Feature — Firebase Storage</li>
+<li>Unit Testing</li>
+<li>Cross-Team Usability Testing</li>
+<li>Refinements</li>
+<li>Deliverables Checklist</li>
+<li>Retrospective</li>
+<li>Conclusion</li>
+</ol>
+<hr />
+<h2 id="1-executive-summary">1. Executive Summary</h2>
+<p>Lab 3 added depth and quality to BookNest. The session delivered:</p>
+<ul>
+<li><strong>One advanced Firebase feature: Firebase Storage</strong> — students can attach a cover
+  image to a book recommendation; it uploads with a progress bar, displays through
+  Coil, and is deleted together with its book.</li>
+<li><strong>Unit tests</strong> — two test classes with <strong>17 test methods</strong> covering validation and
+  search/sort business logic, all passing.</li>
+<li><strong>Usability testing</strong> — a structured think-aloud test (simulated solo against the
+  Lab 2 build) producing concrete, prioritized improvements.</li>
+<li><strong>Refinements</strong> — the highest-priority usability findings were fixed.</li>
+</ul>
+<h3 id="session-timeline">Session timeline</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Sprint planning &amp; feature selection</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Implement advanced Firebase feature (Storage)</td>
+<td>60 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Write unit tests</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Cross-team usability testing</td>
+<td>45 min</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Refinements &amp; demo preparation</td>
+<td>30 min</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-sprint-planning-feature-selection">2. Sprint Planning &amp; Feature Selection</h2>
+<p><strong>Review of Lab 2 action items.</strong> The Lab 2 retrospective committed to (a) writing
+security rules alongside queries and (b) extracting more pure logic for testing.
+Both were carried into Lab 3 and completed.</p>
+<p><strong>Advanced feature decision.</strong> Of the three options, <strong>Option A — Firebase Storage</strong>
+was chosen because it fits BookNest most naturally: a book recommendation app is far
+more useful when each book shows a <strong>cover image</strong>. Cloud Functions (notifications)
+and Realtime Database (live chat/presence) were considered but add less direct user
+value to a recommendation feed, and Storage is realistic to complete in 60 minutes.</p>
+<p><strong>Sprint 2 Trello cards created:</strong> <em>Implement cover image upload (Storage)</em>,
+<em>Write unit tests for core logic</em>, <em>Usability testing</em>, <em>Refine UI from feedback</em>,
+<em>Update documentation</em>.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 12]</strong> — Trello board with Sprint 2 cards.</p>
+</blockquote>
+<hr />
+<h2 id="3-advanced-firebase-feature-firebase-storage">3. Advanced Firebase Feature — Firebase Storage</h2>
+<p><strong>User story:</strong> <em>"As a student, I want to attach a cover image to a book I recommend,
+so others recognise it instantly."</em></p>
+<h3 id="31-enable-storage">3.1 Enable Storage</h3>
+<p>Firebase Console → <strong>Storage → Get started</strong> (test mode for the lab). Bucket noted as
+<code>gs://booknest-XXXXX.appspot.com</code>.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 13]</strong> — Firebase Console Storage tab (enabled, empty bucket).</p>
+</blockquote>
+<h3 id="32-dependency">3.2 Dependency</h3>
+<p>Added to <a href="../app/build.gradle.kts"><code>app/build.gradle.kts</code></a> via the Firebase BoM:
+<code>implementation("com.google.firebase:firebase-storage")</code>, plus
+<code>io.coil-kt:coil-compose</code> for displaying remote images.</p>
+<h3 id="33-image-selection">3.3 Image selection</h3>
+<p><a href="../app/src/main/java/com/ozodbek/booknest/ui/screens/AddBookScreen.kt"><code>AddBookScreen.kt</code></a>
+uses <code>rememberLauncherForActivityResult(ActivityResultContracts.GetContent())</code> to pick
+an image from the gallery and shows a <strong>preview</strong> before upload.</p>
+<h3 id="34-upload-with-progress">3.4 Upload with progress</h3>
+<p>In <a href="../app/src/main/java/com/ozodbek/booknest/viewmodel/BookViewModel.kt"><code>BookViewModel.kt</code></a>:</p>
+<pre><code class="language-kotlin">private suspend fun uploadCover(uri: Uri): String {
+    val ref = storage.reference.child(&quot;book_covers/${UUID.randomUUID()}.jpg&quot;)
+    val task = ref.putFile(uri)
+    task.addOnProgressListener { snap -&gt;
+        _uploadProgress.value = (100.0 * snap.bytesTransferred / snap.totalByteCount).toInt()
+    }
+    task.await()
+    return ref.downloadUrl.await().toString()   // saved into Firestore book doc
+}
+</code></pre>
+<p>The returned <strong>download URL is saved to the Firestore book document</strong> so the list and
+detail screens can render it.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 14]</strong> — Add-book screen with a selected cover preview + upload progress bar.</p>
+</blockquote>
+<h3 id="35-display">3.5 Display</h3>
+<p>Covers are loaded with Coil's <code>AsyncImage</code> on both the list rows and the detail screen.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 15]</strong> — Book list showing cover thumbnails.
+<strong>[SCREENSHOT 16]</strong> — Book detail screen with a large cover image.</p>
+</blockquote>
+<h3 id="36-delete-old-images">3.6 Delete old images</h3>
+<p><code>deleteBook()</code> removes the book document and best-effort deletes its cover from
+Storage (<code>storage.getReferenceFromUrl(url).delete()</code>), preventing orphaned files.</p>
+<h3 id="37-security-rules">3.7 Security rules</h3>
+<p><a href="../storage.rules"><code>storage.rules</code></a>: covers are publicly readable, but writes require
+authentication and are restricted to <strong>images under 5 MB</strong>.</p>
+<h3 id="deliverable-for-the-advanced-feature">Deliverable for the advanced feature</h3>
+<ul>
+<li>✅ Select image from gallery</li>
+<li>✅ Preview before upload</li>
+<li>✅ Upload to Firebase Storage with progress indicator</li>
+<li>✅ Download URL saved to Firestore</li>
+<li>✅ Image displays in the app</li>
+<li>✅ Old image deleted when the book is deleted</li>
+<li>✅ Error handling (no image is allowed; upload errors surfaced)</li>
+</ul>
+<hr />
+<h2 id="4-unit-testing">4. Unit Testing</h2>
+<h3 id="41-approach">4.1 Approach</h3>
+<p>Business logic was deliberately kept in <strong>pure Kotlin</strong> (<code>util/Validators.kt</code>,
+<code>util/BookFilters.kt</code>) with no Android or Firebase dependencies, so it runs on the
+local JVM with plain JUnit — fast and reliable.</p>
+<h3 id="42-test-classes">4.2 Test classes</h3>
+<p><strong><a href="../app/src/test/java/com/ozodbek/booknest/ValidatorsTest.kt"><code>ValidatorsTest.kt</code></a> — 10 methods</strong>
+covering email format, empty/trimmed email, password length, password match, and the
+book-input rules (blank title, over-long description).</p>
+<p><strong><a href="../app/src/test/java/com/ozodbek/booknest/BookFiltersTest.kt"><code>BookFiltersTest.kt</code></a> — 7 methods</strong>
+covering case-insensitive search by title/author/genre, blank-query passthrough,
+title sort, newest-first sort, and combined search+sort.</p>
+<p>That is <strong>17 test methods</strong> total (the lab requires a class with 5+).</p>
+<h3 id="43-running">4.3 Running</h3>
+<p><code>./gradlew test</code> — all 17 pass.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 17]</strong> — Android Studio test runner: 17/17 tests green.</p>
+</blockquote>
+<h3 id="deliverable-for-testing">Deliverable for testing</h3>
+<ul>
+<li>✅ At least one test class created (two)</li>
+<li>✅ Minimum 5 test methods (17)</li>
+<li>✅ Tests cover validation logic <strong>and</strong> business rules</li>
+<li>✅ All tests pass</li>
+<li>✅ Logic extracted into testable functions/classes</li>
+</ul>
+<hr />
+<h2 id="5-cross-team-usability-testing">5. Cross-Team Usability Testing</h2>
+<p>As an individual submission with no partner team present, a structured
+<strong>think-aloud usability test</strong> was performed on the BookNest build, following the
+Lab 3 Phase 4 protocol (first impression → login → CRUD → advanced feature → break it).
+Findings were logged as Trello cards with priority labels.</p>
+<table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>Priority</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No feedback while a cover image uploads</td>
+<td>Critical</td>
+<td>Added an upload <strong>progress bar</strong> (done)</td>
+</tr>
+<tr>
+<td>"Save" allowed an empty title (silent fail)</td>
+<td>Critical</td>
+<td>Added <strong>input validation</strong> with inline error (done)</td>
+</tr>
+<tr>
+<td>Hard to tell which books I saved</td>
+<td>Important</td>
+<td>Bookmark icon now toggles <strong>filled/outline</strong> (done)</td>
+</tr>
+<tr>
+<td>Empty list looked like a bug</td>
+<td>Important</td>
+<td>Added a friendly <strong>empty-state</strong> message (done)</td>
+</tr>
+<tr>
+<td>Genre is free text, easy to mistype</td>
+<td>Nice to have</td>
+<td>Backlogged (dropdown of common genres)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>[SCREENSHOT 18]</strong> — Trello board with bug/improvement/polish cards and priority labels.</p>
+</blockquote>
+<h3 id="deliverable-for-usability">Deliverable for usability</h3>
+<ul>
+<li>✅ Usability test conducted using the structured protocol</li>
+<li>✅ Feedback documented in Trello</li>
+<li>✅ At least 3 actionable improvements identified (5 found)</li>
+</ul>
+<hr />
+<h2 id="6-refinements">6. Refinements</h2>
+<p>The critical and important findings above were fixed during Phase 5 (the "quick wins"):
+upload progress bar, add-book validation, save-state icon toggle, and empty state.
+The remaining "nice to have" item (genre dropdown) was moved to the backlog for the
+final polishing pass.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 19]</strong> — Before/after of the add-book validation error.</p>
+</blockquote>
+<hr />
+<h2 id="7-deliverables-checklist">7. Deliverables Checklist</h2>
+<h3 id="advanced-feature">Advanced feature</h3>
+<ul>
+<li>✅ Firebase Storage fully implemented</li>
+<li>✅ Tested and working reliably</li>
+<li>✅ Integrated with existing add/list/detail/delete flow</li>
+</ul>
+<h3 id="testing">Testing</h3>
+<ul>
+<li>✅ Test class with 5+ methods (17)</li>
+<li>✅ All tests passing</li>
+<li>✅ Validation <strong>and</strong> business logic covered</li>
+</ul>
+<h3 id="usability">Usability</h3>
+<ul>
+<li>✅ Usability test conducted and documented</li>
+<li>✅ Critical issues addressed</li>
+</ul>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li>✅ Trello updated with Sprint 2 progress</li>
+<li>✅ README updated with the new feature</li>
+<li>✅ Demo script prepared (<code>docs/Final_Presentation_Outline.md</code>)</li>
+</ul>
+<hr />
+<h2 id="8-retrospective">8. Retrospective</h2>
+<p><strong>What went well</strong>
+- Keeping logic pure made unit testing genuinely quick — tests were written in minutes.
+- Firebase Storage integrated cleanly because the upload returns a URL that slots
+  straight into the existing Firestore write.</p>
+<p><strong>What didn't go well</strong>
+- The first upload attempt stored the file but forgot to await <code>downloadUrl</code>, so the
+  Firestore field was blank — fixed by awaiting the URL before the document write.
+- Coil needed the <code>INTERNET</code> permission in the manifest to load remote covers.</p>
+<p><strong>What I will improve next time</strong>
+- Add instrumentation/UI tests for the navigation flow, not just unit tests.
+- Replace free-text genre with a controlled list to reduce data-entry errors.</p>
+<hr />
+<h2 id="9-conclusion">9. Conclusion</h2>
+<p>Lab 3 raised BookNest from a working MVP to a polished, tested application. Firebase
+Storage adds clear user value (cover images), 17 unit tests guard the core logic
+against regressions, and structured usability testing drove four concrete UI fixes.
+The app is now stable and ready for the final presentation and submission.</p>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BookNest — Lab 2 Report</title>
+<style>
+@page { size: A4; margin: 22mm 18mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 11pt; line-height: 1.55; color: #1a1a1a;
+  max-width: 100%; margin: 0;
+}
+h1 { font-size: 23pt; color: #1B5E20; border-bottom: 3px solid #1B5E20;
+     padding-bottom: 6px; margin-top: 0.2em; }
+h2 { font-size: 16pt; color: #1B5E20; margin-top: 1.4em;
+     border-bottom: 1px solid #cfe0cf; padding-bottom: 3px; }
+h3 { font-size: 13pt; color: #2e7d32; margin-top: 1.1em; }
+h4 { font-size: 11.5pt; color: #2e7d32; }
+p { margin: 0.5em 0; }
+a { color: #1565c0; text-decoration: none; }
+code {
+  font-family: "Consolas", "Courier New", monospace; font-size: 9.5pt;
+  background: #f2f4f2; padding: 1px 5px; border-radius: 4px; color: #b1361e;
+}
+pre {
+  background: #1e1e1e; color: #e6e6e6; padding: 12px 14px; border-radius: 8px;
+  overflow-x: auto; font-size: 9pt; line-height: 1.45; page-break-inside: avoid;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 9pt; }
+table {
+  border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 10pt;
+  page-break-inside: avoid;
+}
+th { background: #1B5E20; color: #fff; text-align: left; padding: 7px 10px; }
+td { border: 1px solid #d4d4d4; padding: 6px 10px; vertical-align: top; }
+tr:nth-child(even) td { background: #f6f9f6; }
+blockquote {
+  border-left: 4px solid #1B5E20; background: #f3f8f3; margin: 0.8em 0;
+  padding: 6px 14px; color: #33463a;
+}
+ul, ol { margin: 0.4em 0 0.8em 1.4em; }
+li { margin: 0.25em 0; }
+hr { border: none; border-top: 1px solid #d0d0d0; margin: 1.6em 0; }
+strong { color: #15301a; }
+</style>
+</head>
+<body>
+<h1 id="laboratory-2-android-firebase-team-project">Laboratory 2 — Android + Firebase Team Project</h1>
+<h2 id="booknest-authentication-firestore-crud">BookNest — Authentication &amp; Firestore CRUD</h2>
+<p><strong>Student:</strong> Ozodbek Tursunaliyev
+<strong>Student ID:</strong> 57264
+<strong>Course:</strong> Cloud Computing Architecture, Akademia WSB
+<strong>Submission type:</strong> Individual project (solo — all roles performed by the student)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li>Executive Summary</li>
+<li>Definition of Done</li>
+<li>Firebase Authentication</li>
+<li>Firestore CRUD Operations</li>
+<li>Extensions Implemented</li>
+<li>Development Workflow</li>
+<li>Deliverables Checklist</li>
+<li>Retrospective</li>
+<li>Conclusion</li>
+</ol>
+<hr />
+<h2 id="1-executive-summary">1. Executive Summary</h2>
+<p>Lab 2 extended the BookNest foundation from Lab 1 from a planned design into a
+<strong>working application</strong>. Because teammates were absent, the project continued to be
+delivered individually, with all four roles (Product Owner, Tech Lead, Developer,
+QA/DevOps) handled by one student, as permitted by the lab guidelines.</p>
+<p>By the end of the session BookNest had:</p>
+<ul>
+<li>Working <strong>email/password</strong> authentication (register, log in, log out, session persistence)</li>
+<li>A live <strong>book recommendation list</strong> backed by Cloud Firestore</li>
+<li>Complete <strong>CRUD</strong> (Create, Read, Update, Delete) for the <code>books</code> entity</li>
+<li><strong>Four extensions</strong>: search/filter, sorting, input validation, and a status toggle</li>
+</ul>
+<h3 id="session-timeline">Session timeline</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Planning &amp; choosing extensions</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Firebase Authentication</td>
+<td>40 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Firestore CRUD</td>
+<td>50 min</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Extensions &amp; polish</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Demo &amp; micro-retrospective</td>
+<td>40 min</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-definition-of-done">2. Definition of Done</h2>
+<p>The team (solo) agreed the following "Definition of Done" for Lab 2:</p>
+<ul>
+<li>✅ User can register and log in with email/password</li>
+<li>✅ User can log out and return to login screen</li>
+<li>✅ Main list screen displays data from Firestore in real time</li>
+<li>✅ User can add a new book recommendation</li>
+<li>✅ User can edit an existing recommendation (owner only)</li>
+<li>✅ User can delete a recommendation with a confirmation dialog</li>
+<li>✅ At least 2 extensions implemented (achieved <strong>4</strong>)</li>
+</ul>
+<hr />
+<h2 id="3-firebase-authentication">3. Firebase Authentication</h2>
+<h3 id="31-enabling-emailpassword">3.1 Enabling Email/Password</h3>
+<p>In the Firebase Console → <strong>Authentication → Sign-in method</strong>, the
+<strong>Email/Password</strong> provider was enabled.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 1]</strong> — Firebase Console showing Email/Password provider <em>Enabled</em>.</p>
+</blockquote>
+<h3 id="32-login-register-screens">3.2 Login &amp; Register screens</h3>
+<p>Two Jetpack Compose screens were created (consistent with the Compose choice from
+Lab 1):</p>
+<ul>
+<li><strong>Login screen</strong> — email field, password field, <em>Log in</em> button, <em>Register</em> link,
+  inline error message area, and a loading spinner.</li>
+<li><strong>Register screen</strong> — email, password, confirm-password, and optional university
+  fields, plus a <em>Create account</em> button and <em>Back to login</em> link.</li>
+</ul>
+<blockquote>
+<p><strong>[SCREENSHOT 2]</strong> — BookNest Login screen running in the emulator.
+<strong>[SCREENSHOT 3]</strong> — BookNest Register screen.</p>
+</blockquote>
+<p>Source: <a href="../app/src/main/java/com/ozodbek/booknest/ui/screens/LoginScreen.kt"><code>LoginScreen.kt</code></a>,
+<a href="../app/src/main/java/com/ozodbek/booknest/ui/screens/RegisterScreen.kt"><code>RegisterScreen.kt</code></a></p>
+<h3 id="33-firebaseauth-implementation">3.3 FirebaseAuth implementation</h3>
+<p>All authentication logic lives in
+<a href="../app/src/main/java/com/ozodbek/booknest/auth/AuthViewModel.kt"><code>AuthViewModel.kt</code></a>.
+Key decisions:</p>
+<ul>
+<li><strong>Registration</strong> calls <code>createUserWithEmailAndPassword</code>, then writes a matching
+  document to the Firestore <code>users</code> collection (userId, email, displayName,
+  university, createdAt).</li>
+<li><strong>Login</strong> calls <code>signInWithEmailAndPassword</code>.</li>
+<li><strong>Logout</strong> calls <code>auth.signOut()</code> and flips the UI state back to the login screen.</li>
+<li>Calls use Kotlin <strong>coroutines</strong> (<code>.await()</code>) inside <code>viewModelScope</code>, so the UI
+  thread is never blocked.</li>
+</ul>
+<pre><code class="language-kotlin">val result = auth.createUserWithEmailAndPassword(email.trim(), password).await()
+val uid = result.user?.uid ?: error(&quot;Missing user id after sign-up&quot;)
+db.collection(&quot;users&quot;).document(uid).set(user).await()
+</code></pre>
+<h3 id="34-navigation-rules">3.4 Navigation rules</h3>
+<p>Navigation is centralized in
+<a href="../app/src/main/java/com/ozodbek/booknest/ui/nav/BookNestNavigation.kt"><code>BookNestNavigation.kt</code></a>.
+A <code>LaunchedEffect</code> observes the authentication state:</p>
+<ul>
+<li>On app start, if <code>auth.currentUser != null</code>, the user <strong>skips the login screen</strong>.</li>
+<li>After successful login/registration the app navigates to the list and calls
+  <code>popUpTo(0) { inclusive = true }</code>, which <strong>clears the back stack</strong> so the system
+  Back button cannot return to the login screen (the Compose-Navigation equivalent
+  of the <code>FLAG_ACTIVITY_CLEAR_TASK</code> pattern in the troubleshooting guide).</li>
+</ul>
+<h3 id="35-error-handling">3.5 Error handling</h3>
+<p>Raw Firebase exceptions are mapped to friendly messages in <code>friendlyMessage()</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Firebase error</th>
+<th>Shown to user</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INVALID_LOGIN_CREDENTIALS</code></td>
+<td>"Incorrect email or password"</td>
+</tr>
+<tr>
+<td><code>email address is already in use</code></td>
+<td>"An account with this email already exists"</td>
+</tr>
+<tr>
+<td><code>network</code> errors</td>
+<td>"Network error — check your connection"</td>
+</tr>
+</tbody>
+</table>
+<p>Client-side validation (via <code>Validators</code>) runs <strong>before</strong> any network call, so
+malformed emails and short passwords fail instantly with a clear message.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 4]</strong> — Login screen showing the "Incorrect email or password" error.</p>
+</blockquote>
+<hr />
+<h2 id="4-firestore-crud-operations">4. Firestore CRUD Operations</h2>
+<h3 id="41-main-entity">4.1 Main entity</h3>
+<p>The chosen entity is <strong><code>books</code></strong> (book recommendations). The data class is
+<a href="../app/src/main/java/com/ozodbek/booknest/data/Book.kt"><code>Book.kt</code></a>, with default
+values and a no-arg constructor so Firestore's <code>toObject&lt;Book&gt;()</code> works.</p>
+<h3 id="42-read-real-time">4.2 Read (real-time)</h3>
+<p><a href="../app/src/main/java/com/ozodbek/booknest/viewmodel/BookViewModel.kt"><code>BookViewModel.kt</code></a>
+attaches an <code>addSnapshotListener</code> to the <code>books</code> collection ordered by <code>createdAt</code>.
+The list updates the instant any document changes — no manual refresh.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 5]</strong> — Book list screen showing recommendations from Firestore.</p>
+</blockquote>
+<h3 id="43-create">4.3 Create</h3>
+<p>The <em>Recommend a book</em> form (<a href="../app/src/main/java/com/ozodbek/booknest/ui/screens/AddBookScreen.kt"><code>AddBookScreen.kt</code></a>)
+validates input, then writes a new document. The new book appears in the list
+immediately through the snapshot listener.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 6]</strong> — Add-book form filled in.</p>
+</blockquote>
+<h3 id="44-update">4.4 Update</h3>
+<p>Tapping a book opens <a href="../app/src/main/java/com/ozodbek/booknest/ui/screens/BookDetailScreen.kt"><code>BookDetailScreen.kt</code></a>.
+The recommender sees editable fields; <code>updateBook()</code> writes the changes.</p>
+<h3 id="45-delete">4.5 Delete</h3>
+<p>Owners get a delete action that shows an <strong>AlertDialog confirmation</strong> before
+<code>deleteBook()</code> removes the document.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 7]</strong> — Delete confirmation dialog.</p>
+</blockquote>
+<h3 id="46-user-specific-data-permissions">4.6 User-specific data &amp; permissions</h3>
+<ul>
+<li>Each book stores <code>recommendedBy</code> = the creator's <code>userId</code>.</li>
+<li><strong>Only the owner</strong> sees the edit/delete UI (<code>book.recommendedBy == currentUserId</code>).</li>
+<li>This is enforced server-side too, in
+  <a href="../firestore.rules"><code>firestore.rules</code></a>: <code>update, delete</code> require
+  <code>resource.data.recommendedBy == request.auth.uid</code>.</li>
+</ul>
+<hr />
+<h2 id="5-extensions-implemented">5. Extensions Implemented</h2>
+<p>Four extensions were completed (the lab required 2–3):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Extension</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Search / filter</strong> — case-insensitive across title, author, genre</td>
+<td><code>BookFilters.search</code>, search box on list screen</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Sorting</strong> — Title, Author, Genre (A–Z), Newest first</td>
+<td><code>BookFilters.sort</code>, sort menu in top bar</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Input validation</strong> — required fields, min title length, max 500-char description</td>
+<td><code>Validators.validateBookInput</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Status toggle</strong> — Want-to-read ↔ Finished on saved books</td>
+<td><code>BookViewModel.toggleSavedStatus</code>, <code>SavedBooksScreen</code></td>
+</tr>
+</tbody>
+</table>
+<p>A fifth nicety — an <strong>empty state</strong> message — is shown when the list (or a search)
+returns nothing.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 8]</strong> — Search box filtering the list to one result.
+<strong>[SCREENSHOT 9]</strong> — Want-to-Read list with a book marked "Finished".</p>
+</blockquote>
+<hr />
+<h2 id="6-development-workflow">6. Development Workflow</h2>
+<p>Working solo, commits were made with descriptive messages preserving a clear
+history. In a team setting each change would go through a feature branch and PR;
+the recommended branch names are documented for reference:</p>
+<ul>
+<li><code>feature/auth</code> — authentication screens &amp; FirebaseAuth</li>
+<li><code>feature/firestore-crud</code> — book list + add/edit/delete</li>
+<li><code>feature/extensions</code> — search, sort, validation, status toggle</li>
+</ul>
+<p>Trello board: cards for Authentication, CRUD, and each extension were moved across
+<strong>Backlog → Sprint 1 → In Progress → Review → Done</strong>.</p>
+<blockquote>
+<p><strong>[SCREENSHOT 10]</strong> — Trello board with Sprint 1 cards in Done.
+<strong>[SCREENSHOT 11]</strong> — GitHub commit history / pull requests.</p>
+</blockquote>
+<hr />
+<h2 id="7-deliverables-checklist">7. Deliverables Checklist</h2>
+<h3 id="authentication">Authentication</h3>
+<ul>
+<li>✅ Email/password enabled in Firebase Console</li>
+<li>✅ Login &amp; Register screens functional</li>
+<li>✅ Users can create accounts, log in, log out</li>
+<li>✅ App checks auth status on startup; logged-in users skip login</li>
+<li>✅ Friendly error messages for invalid credentials</li>
+</ul>
+<h3 id="firestore-crud">Firestore CRUD</h3>
+<ul>
+<li>✅ <code>books</code> collection + Kotlin data class</li>
+<li>✅ List screen with real-time snapshot listener</li>
+<li>✅ Add / edit / delete with confirmation</li>
+<li>✅ List filtered/permissioned to the owner for edits</li>
+</ul>
+<h3 id="extensions">Extensions</h3>
+<ul>
+<li>✅ 4 extensions implemented (search, sort, validation, status toggle)</li>
+</ul>
+<h3 id="collaboration">Collaboration</h3>
+<ul>
+<li>✅ Trello updated, GitHub has new commits</li>
+</ul>
+<hr />
+<h2 id="8-retrospective">8. Retrospective</h2>
+<p><strong>What went well</strong>
+- Centralizing auth in a single ViewModel kept navigation logic clean.
+- The Firestore snapshot listener made the UI feel instant with very little code.
+- Reusing pure <code>Validators</code>/<code>BookFilters</code> functions made extensions quick.</p>
+<p><strong>What didn't go well</strong>
+- First Firestore reads failed with <em>Permission denied</em> until security rules were
+  switched from locked defaults to "authenticated users".
+- Compose state hoisting took a couple of attempts to get the search box to
+  recompose correctly.</p>
+<p><strong>What I will improve next time</strong>
+- Write the security rules at the same time as the first query.
+- Extract more logic into pure functions early, to make Lab 3 testing easier.</p>
+<hr />
+<h2 id="9-conclusion">9. Conclusion</h2>
+<p>Lab 2 turned BookNest into a functioning MVP: students can register, log in, and
+manage book recommendations stored in the cloud, with four polish extensions on top.
+The clean separation between pure logic (<code>util/</code>), Firebase access (ViewModels), and
+Compose UI set up Lab 3 (advanced feature + unit testing) to proceed smoothly.</p>
+</body>
+</html>
