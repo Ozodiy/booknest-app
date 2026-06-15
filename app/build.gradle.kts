@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // Reads google-services.json and wires Firebase into the build.
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -37,6 +39,10 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        // Lets unit tests that touch com.google.firebase.Timestamp run on the JVM.
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -48,6 +54,28 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    // --- Lab 2/3 additions (direct coordinates, BOM-managed where possible) ---
+    // Navigation + ViewModel in Compose
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    // Material icons (Bookmark, Sort, Image, …) — version from the Compose BOM
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Firebase: Auth, Firestore, Storage (BOM keeps versions aligned)
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
+
+    // Coroutines + the bridge that gives Firebase Tasks the suspend `.await()`
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+
+    // Coil loads remote book-cover images from Firebase Storage
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// BookNest Firestore security rules.
+// Development-friendly but better than fully open: every read/write requires a
+// signed-in user, and only the recommender can edit or delete their own books.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      // A user can only create/modify their own profile document.
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /books/{bookId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.recommendedBy == request.auth.uid;
+      // Only the original recommender may update or delete.
+      allow update, delete: if request.auth != null
+                    && resource.data.recommendedBy == request.auth.uid;
+    }
+
+    match /savedBooks/{savedId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null
+                    && resource.data.userId == request.auth.uid;
+    }
+  }
+}

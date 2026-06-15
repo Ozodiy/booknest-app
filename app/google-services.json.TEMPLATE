@@ -1,0 +1,38 @@
+________________________________________________________________________
+  THIS IS A PLACEHOLDER — IT IS NOT A REAL google-services.json.
+
+  Do NOT rename this file as-is. Generate the real one from Firebase:
+
+    1. Open https://console.firebase.google.com and select your BookNest project
+       (or "Add project" if you haven't created it yet — disable Analytics).
+    2. Click the Android icon to register an app.
+       Android package name MUST be exactly:  com.ozodbek.booknest
+    3. Click "Download google-services.json".
+    4. Put the downloaded file at:  app/google-services.json
+       (same folder as this template — Project view in Android Studio).
+    5. In Firebase Console enable:
+         - Authentication  -> Sign-in method -> Email/Password -> Enable
+         - Firestore Database -> Create database (test mode for the labs)
+         - Storage -> Get started (test mode for the labs)
+    6. Sync Gradle in Android Studio.
+
+  The real file is JSON shaped like the structure below (values are examples):
+________________________________________________________________________
+
+{
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "booknest-XXXXX",
+    "storage_bucket": "booknest-XXXXX.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "android_client_info": { "package_name": "com.ozodbek.booknest" }
+      },
+      "api_key": [ { "current_key": "AIza...YOUR_KEY..." } ]
+    }
+  ],
+  "configuration_version": "1"
+}
